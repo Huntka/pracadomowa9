@@ -1,0 +1,7 @@
+streamlit
+openai
+langfuse
+pandas
+scikit-learn
+boto3
+s3fs
