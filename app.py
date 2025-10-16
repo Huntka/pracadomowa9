@@ -112,16 +112,17 @@ def extract_runner_data(user_description: str) -> dict:
 import boto3
 import pickle
 import pandas as pd
+import os # <-- Dodajemy ten import!
 
 # Funkcja do pobrania i wczytania modelu z chmury
 @st.cache_resource # Dzięki temu model pobierze się tylko raz, przy starcie aplikacji
 def load_model_from_space():
     try:
-        # Pobieramy klucze z sekretów Streamlit (skonfigurujemy je później w panelu DigitalOcean)
-        DO_SPACES_ACCESS_KEY = st.secrets["DO_SPACES_ACCESS_KEY"]
-        DO_SPACES_SECRET_KEY = st.secrets["DO_SPACES_SECRET_KEY"]
-        DO_SPACES_ENDPOINT_URL = st.secrets["DO_SPACES_ENDPOINT_URL"]
-        DO_SPACES_BUCKET_NAME = st.secrets["DO_SPACES_BUCKET_NAME"]
+        # --- KLUCZOWA ZMIANA: Pobieramy klucze ze zmiennych środowiskowych serwera ---
+        DO_SPACES_ACCESS_KEY = os.environ.get("DO_SPACES_ACCESS_KEY")
+        DO_SPACES_SECRET_KEY = os.environ.get("DO_SPACES_SECRET_KEY")
+        DO_SPACES_ENDPOINT_URL = os.environ.get("DO_SPACES_ENDPOINT_URL")
+        DO_SPACES_BUCKET_NAME = os.environ.get("DO_SPACES_BUCKET_NAME")
         MODEL_FILE_NAME = "marathon_model.pkl"
 
         # Tworzymy klienta s3
@@ -145,6 +146,10 @@ def load_model_from_space():
 
 # Wczytujemy model
 model = load_model_from_space()
+
+# --- ZMIANA W KLIENCIE OPENAI ---
+# Aplikacja w chmurze automatycznie użyje zmiennej OPENAI_API_KEY
+client = OpenAI()
 
 def predict_time(age: int, gender: str, pace_5k: float) -> str:
     """
