@@ -108,17 +108,17 @@ def extract_runner_data(user_description: str) -> dict:
         st.error(f"Wystąpił błąd podczas komunikacji z API OpenAI: {e}")
         return {}
 
-# --- UWAGA: MIEJSCE NA TWÓJ MODEL ---
+# --- MIEJSCE NA MÓJ MODEL ---
 import boto3
 import pickle
 import pandas as pd
-import os # <-- Dodajemy ten import!
+import os
 
 # Funkcja do pobrania i wczytania modelu z chmury
-@st.cache_resource # Dzięki temu model pobierze się tylko raz, przy starcie aplikacji
+@st.cache_resource
 def load_model_from_space():
     try:
-        # --- KLUCZOWA ZMIANA: Pobieramy klucze ze zmiennych środowiskowych serwera ---
+        # Pobieramy klucze ze zmiennych środowiskowych serwera ---
         DO_SPACES_ACCESS_KEY = os.environ.get("DO_SPACES_ACCESS_KEY")
         DO_SPACES_SECRET_KEY = os.environ.get("DO_SPACES_SECRET_KEY")
         DO_SPACES_ENDPOINT_URL = os.environ.get("DO_SPACES_ENDPOINT_URL")
